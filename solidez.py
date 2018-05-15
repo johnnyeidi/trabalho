@@ -1,4 +1,6 @@
 import math # floor
+from random import randint #para gerar numeros aleatorios
+import time #Calcular o tempo
 
 # implementa a solução dinâmica para a solidez do vetor, usa a solução da firmeza para divisão do problema em subestruturas ótimas
 def solidezV3(A, p, r) :
@@ -63,45 +65,82 @@ def solidezV2(A, p, r):
 		return max(valores)
 
 def solidezV1(A, p, r):
-	soma = []
+	esquerda = 1
+	direita = 1
+	maior = A[0]
+	Sol = 0
 
-	# se o intervalo é unitário
-	if p == r:
-		return A[p]
+	for i in range(0, r, 1):
+		Sol = 0
+		for j in range(i, r, 1):
+			Sol = Sol + A[j]
+			if (Sol > maior) :
+				maior = Sol
+				esquerda = i
+				direita = j
 
-	i, j = p, 0
+	return maior
 
-	while (j < r):
-		aux = 0
-		i = r - j -1
-		while (i >= 0):
-			aux += A[i]
-			i -= 1
-
-		soma.append(aux)
-
-		j += 1
-		print(soma)
-
-	j = 0
-
-	while (j < r):
-		aux = 0
-		i = j
-		while (i < r):
-	  		aux += A[i]
-	  		i += 1
-
-		soma.append(aux)
-
-		j += 1
-		print(soma)
-
-	return max(soma)
 
 def main ():
-  a = [0, 1, 1, -1,-1]
-  print("soma máxima:", solidezV1(a, 0, len(a)))
   
+	#V1 = [13, -3, -25, 20, -3, -16, -23, 18, 20, -7, 12, -5, -22, 15, -4, 7]
+	y_axis1 = []
+	y_axis2 = []
+	y_axis3 = []
+	x_axis = []
+	start_time = time.time()
+
+	for i in range(100,20100,100):
+		print(i)
+		V1 = []
+		V2 = []
+		V3 = []
+
+		x_axis.append(i)
+
+		for j in range(i):
+			valor = randint(-10*i, 100*i)
+			V1.append(valor)
+			V2.append(valor)
+			V3.append(valor)
+
+		#Tempo Solidez V1
+		start_time = time.time()
+		tam = solidezV1(V1, 0, len(V1))
+		end_time = time.time()
+		del V1[:]
+		y_axis1.append(end_time - start_time)
+
+		#Tempo Solidez V2
+		start_time = time.time()
+		tam = solidezV3(V2, 0, len(V2))
+		end_time = time.time()
+		del V2[:]
+		y_axis2.append(end_time - start_time)
+
+		#Tempo Solidez V3
+		start_time = time.time()
+		tam = solidezV3(V3, 0, len(V3))
+		end_time = time.time()
+		del V3[:]
+		y_axis3.append(end_time - start_time)
+		
+	try:
+		nome_arquivo = 'saida.txt'
+		arquivo = open(nome_arquivo, 'r+')
+	except FileNotFoundError:
+		arquivo = open(nome_arquivo, 'w+')
+
+	arquivo.write("		n")
+	arquivo.write("								solidezI")
+	arquivo.write("								solidezII")
+	arquivo.write("								solidezIII\n")
+	arquivo.write("-----------------------------------------------------------------------------------------------------------\n")
+
+	for i, item1, item2, item3 in zip(x_axis, y_axis1, y_axis2, y_axis3):
+		arquivo.write("%5s        %26s        %26s        %26s\n" % (i,item1, item2, item3))
+
+	arquivo.close()
   
 main()
